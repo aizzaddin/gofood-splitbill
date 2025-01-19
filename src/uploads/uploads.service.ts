@@ -25,10 +25,17 @@ export class UploadsService {
         const firstRegex = /^(\d+)([^\@]+)@Rp([\d\.]+)Rp/
         const secondRegex = /^(\d+)(.*)(?!.*%).*$/
         const priceRegex = /Rp\d+\.\d+/
-        const biayaRegex = /^(.*?)(-?Rp[\d\.]+)$/;
+        const biayaRegex = /^(.*?)(-?Rp[\d\.]+)$/
+        const dateRegex = /^(\w+),\s(\d{1,2})\s(\w+)\s(\d{4})$/
+        const transactionIdRegex = /^Transaction ID:\s([A-Z]-\d+)$/
+
         for (let i = 0; i < text.length; i++) {
             if (text[i].toLowerCase().includes("paid with")) {
                 break;
+            } else if (text[i].match(dateRegex)) {
+                order["Order Date"] = text[i];
+            } else if (text[i].match(transactionIdRegex)) {
+                order["Transaction ID"] = text[i].match(transactionIdRegex)[1];
             } else if (text[i].toLowerCase().includes("total paid")) {
                 totalPaid = text[i].substring(text[i].indexOf("Rp"), text[i].length);
             } else if (text[i].match(firstRegex)) {
@@ -60,10 +67,10 @@ export class UploadsService {
 
                 order[match[1].trim()] = match[2];
                 order["orders"] = orderDetails;
-
             }
         }
 
+        console.log(text)
         return order;
     }
 }
