@@ -7,8 +7,14 @@ export class UploadsService {
     async fileUpload(file: Express.Multer.File) {
         const result = await this.exportGojek(file);
 
+        if (result) {
+            fs.unlink(file.path, (err) => {
+                if (err) throw err;
+            })
+        }
+
         return {
-            message: 'File uploaded successfully', filePath: file.path, result: result
+            message: 'File parsed successfully', filePath: file.path, result: result
         }
     }
 
